@@ -35,10 +35,10 @@ This deployment follows a **two-stage architecture**:
 ```bash
 /3-Observability-Hub
 ├── README.md                 #  guide
-├── prometheus-values.yaml    # Helm configuration (Prometheus + Grafana)
-├── alertmanager-config.yaml  # External Alertmanager config for Slack
-├── alerting-rules.yaml       # Custom SRE alert rules
-└── test-alert.yaml           # Sample test alert to verify Slack integration
+├── prometheus-values.yml    # Helm configuration (Prometheus + Grafana)
+├── alertmanager-config.yml  # External Alertmanager config for Slack
+├── alerting-rules.yml       # Custom SRE alert rules
+└── test-alert.yml           # Sample test alert to verify Slack integration
 ````
 
 ---
@@ -210,10 +210,9 @@ You will now see a complete dashboard visualizing your cluster's health.
 
 ###  Author
 
-**Ajay kumar (ExtraordinaryTechy)**
+**Ajay kumar (Extraordinarytechy)**
 Cloud & DevOps Engineer 
 
 ```
 
 ---
-
