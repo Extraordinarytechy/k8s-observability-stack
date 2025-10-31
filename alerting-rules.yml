@@ -1,0 +1,32 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: sre-custom-rules
+  labels:
+    release: prometheus
+spec:
+  groups:
+  - name: cluster-sre-rules
+    rules:
+    # --- Alert for high CPU usage ---
+    - alert: HighCpuUsage
+      # The 'expr' is the query. This one finds nodes with
+      # less than 10% idle CPU for over 5 minutes.
+      expr: (100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)) > 90
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Node {{ $labels.instance }} has high CPU usage (> 90%)"
+        description: "The node {{ $labels.instance }} has been at {{ $value | humanize }}% CPU usage for over 5 minutes."
+
+    # --- Alert for a node being down ---
+    - alert: NodeDown
+      # The 'up' metric is 1 if the node is reachable, 0 if not.
+      expr: up{job="node-exporter"} == 0
+      for: 2m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Node {{ $labels.instance }} is down"
+        description: "The node-exporter on {{ $labels.instance }} has been unreachable for 2 minutes."
