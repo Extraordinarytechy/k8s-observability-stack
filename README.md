@@ -78,7 +78,20 @@ kubectl create namespace monitoring
 
 ---
 
-### **Step 3: Install the Stack Using Helm**
+### **Step 3: Create the Grafana Admin Secret**
+
+Grafana reads its admin credentials from a Kubernetes Secret, so no password lives in the repo:
+
+```bash
+kubectl create secret generic grafana-admin-credentials \
+  --namespace monitoring \
+  --from-literal=admin-user=admin \
+  --from-literal=admin-password="$(openssl rand -base64 20)"
+```
+
+---
+
+### **Step 4: Install the Stack Using Helm**
 
 ```bash
 helm install prometheus prometheus-community/kube-prometheus-stack \
@@ -182,10 +195,17 @@ kubectl port-forward -n monitoring svc/prometheus-grafana 3000:80
 Then open:
  [http://localhost:3000](http://localhost:3000)
 
-| Credential   | Value                                            |
-| ------------ | ------------------------------------------------ |
-| **Username** | `admin`                                          |
-| **Password** | `admin123` *(or as defined in your values file)* |
+Retrieve the admin password from the secret you created:
+
+```bash
+kubectl get secret grafana-admin-credentials -n monitoring \
+  -o jsonpath="{.data.admin-password}" | base64 -d; echo
+```
+
+| Credential   | Value                                                        |
+| ------------ | ------------------------------------------------------------ |
+| **Username** | `admin`                                                      |
+| **Password** | stored in the `grafana-admin-credentials` Secret (see above) |
 
 ## Import Your Dashboard
 
